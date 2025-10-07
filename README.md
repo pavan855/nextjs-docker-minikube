@@ -1,18 +1,23 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
+Frontend Framework: Next.js 15
+
+Language: TypeScript
+
+Containerization: Docker
+
+CI/CD: GitHub Actions
+
+Deployment: Minikube (Kubernetes)
+
+Registry: GitHub Container Registry (GHCR)
 
 First, run the development server:
 
-```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -20,17 +25,40 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+Docker Setup
+docker build -t my-nextjs-app . (Build Docker image)
+docker run -p 3000:3000 my-nextjs-app  (Run Docker container)
 
-To learn more about Next.js, take a look at the following resources:
+GitHub Actions (CI/CD)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Each push to the main branch triggers a GitHub Actions workflow that:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Builds the Docker image using your Dockerfile.
 
-## Deploy on Vercel
+Tags the image as
+ghcr.io/pavan855/nextjs-docker-minikube:latest
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Pushes it to GitHub Container Registry (GHCR).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deploying to Minikube (Kubernetes)
+minikube start (start mimikube)
+
+Build the image inside Minikube
+eval $(minikube docker-env)
+docker build -t my-nextjs-app:local .
+
+Apply Kubernetes Manifests
+kubectl apply -f k8s/deployment.yml
+kubectl apply -f k8s/service.yml
+
+Verify Pods and Services
+kubectl get pods
+kubectl get svc
+
+Access the Application
+minikube service nextjs-service
+http://127.0.0.1:30000            (Url)
+
+GHCR Docker Image
+
+The built image is publicly available at (ghcr.io/pavan855/nextjs-docker-minikube:latest)
