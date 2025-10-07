@@ -1,6 +1,7 @@
 # Builder stage
 FROM node:20-slim AS builder
 
+
 WORKDIR /app
 
 # Copy package files
@@ -16,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:20-slim AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
