@@ -1,14 +1,13 @@
-# Use official Node.js base image
-FROM node:18-alpine AS builder
+# Builder stage
+FROM node:20-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install all dependencies (dev + prod needed for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -17,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS runner
+FROM node:20-slim AS runner
 
 WORKDIR /app
 
@@ -26,7 +25,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 
-# Install only production deps
+# Install only production dependencies
 RUN npm ci --only=production --omit=dev
 
 # Expose port
@@ -34,3 +33,4 @@ EXPOSE 3000
 
 # Start command
 CMD ["npm", "start"]
+
